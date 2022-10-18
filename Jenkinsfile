@@ -2,7 +2,8 @@ pipeline{
     agent any
 
     environment{
-        CURRENT_VERISON='0.1'
+        CURRENT_VERSION='0.1'
+        SERVER_CREDENTIALS=credentials('azure-key')
     }
 
     stages{
@@ -13,6 +14,11 @@ pipeline{
                     BRANCH_NAME=='dev'
                 }
             }
+
+            agent{
+                label 'build-engine'
+            }
+
             steps{
                 echo "building  verison ${CURRENT_VERSION}" //double quote is required for in-line variable call
                 echo 'building version ${CURRENT_VERSION}' //everything is string
@@ -36,6 +42,11 @@ pipeline{
                     BRANCH_NAME=='prod'
                 }
             }
+
+            agent{
+                label 'build-engine'
+            }
+
             steps{
 
             }
@@ -46,7 +57,14 @@ pipeline{
                     BRANCH_NAME=='prod'
                 }
             }
+
             steps{
+                withCredentials([
+                    usernamePassword(credentials: 'azure-keys', username: "${USERNAME}", password: "${PASSWORD}")
+                ])
+                {
+
+                }
 
             }
         }
