@@ -1,6 +1,11 @@
 pipeline{
     agent any
 
+    tools{
+        maven
+        git
+    }
+
     environment{
         CURRENT_VERSION='0.1'
         SERVER_CREDENTIALS=credentials('azure-key')

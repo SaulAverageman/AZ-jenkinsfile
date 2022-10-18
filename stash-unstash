@@ -1,0 +1,27 @@
+pipeline{
+    agent any
+    tools{
+        maven 'maven3'
+        git
+    }
+    
+    stages{
+        stage ('checkout'){
+            agent{
+                label 'master'
+            }
+            steps{
+                git clone "url"
+                stash 'source-code'
+            }
+        }
+
+        stage('build'){
+            agent{
+                label 'builder'
+                unstash 'source-code'
+                sh 'mvn clean build package'
+            }
+        }
+    }
+}
