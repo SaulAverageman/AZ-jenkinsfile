@@ -1,3 +1,6 @@
+//defining groovy globally
+def gvScript
+
 pipeline{
     agent any
 
@@ -93,10 +96,15 @@ pipeline{
     //post build steps
     post{
         always{
-
+            //running external scripts
+            script{
+                gvScript=load('commit.groovy')
+            }
         }
         success{
-
+            script{
+                gvScript.commit()
+            }
         }
         failure{
 
