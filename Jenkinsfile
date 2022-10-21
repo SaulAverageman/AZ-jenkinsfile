@@ -1,29 +1,42 @@
 pipeline{
     agent any
 
+    //pipeline tools and their registered names in the agents
     tools{
-        maven
-        git
+        maven 'maven'
+        git 'git'
     }
 
+    //parameters
+    parameters{
+        string(name: 'VERSION', defaultValue: '1.6.1', description: 'build version')
+        choices(name : 'repos', defaultValue:['source1','source2'], description: '')
+        booleanParam(name: 'allowTests', defaultValue:true, description:'')
+    }
+
+    //used to set Environment variables
     environment{
         CURRENT_VERSION='0.1'
         SERVER_CREDENTIALS=credentials('azure-key')
     }
 
+    //stages of pipeline
     stages{
         stage('dev-build')
-        {
+        {   
+            //condintion for execution
             when{
                 expression{
                     BRANCH_NAME=='dev'
                 }
             }
 
+            //excution node
             agent{
                 label 'build-engine'
             }
 
+            //steps
             steps{
                 echo "building  verison ${CURRENT_VERSION}" //double quote is required for in-line variable call
                 echo 'building version ${CURRENT_VERSION}' //everything is string
@@ -32,7 +45,8 @@ pipeline{
         stage('dev-test'){
             when{
                 expression{
-                    BRANCH_NAME=='dev'
+                    //how to use env variable and parameters
+                    BRANCH_NAME=='dev' && param.allowTests==true
                 }
             }
             steps{
@@ -64,6 +78,7 @@ pipeline{
             }
 
             steps{
+                //if credentials are needed
                 withCredentials([
                     usernamePassword(credentials: 'azure-keys', username: "${USERNAME}", password: "${PASSWORD}")
                 ])
@@ -74,6 +89,8 @@ pipeline{
             }
         }
     }
+
+    //post build steps
     post{
         always{
 
