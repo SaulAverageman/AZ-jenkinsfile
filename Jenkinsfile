@@ -9,8 +9,8 @@ pipeline{
 
     //parameters
     parameters{
-        string(name: 'VERSION', defaultValue: '1.6.1', description: 'build version')
-        choices(name : 'repos', defaultValue:['source1','source2'], description: '')
+        string(name: 'repo', defaultValue: 'source1', description: 'build version')
+        choice(name : 'VERSION', choices:['1.1.0','1.2.0'], description: '')
         booleanParam(name: 'allowTests', defaultValue:true, description:'')
     }
 
